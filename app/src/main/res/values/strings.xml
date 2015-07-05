@@ -3,4 +3,6 @@
     <string name="action_settings">Settings</string>
 
     <string name="search_query_hint">Search Artists</string>
+
+    <string name="list_item_artist_content">Artist Image</string>
 </resources>
