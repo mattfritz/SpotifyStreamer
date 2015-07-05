@@ -1,16 +1,29 @@
 package com.mattfritz.spotifystreamer;
 
-import android.support.v7.app.ActionBarActivity;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import java.util.List;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.ArtistsPager;
+
 public class MainActivity extends ActionBarActivity {
 
-    @Override
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        SearchSpotifyTask task = new SearchSpotifyTask();
+        task.execute();
     }
 
 
@@ -34,5 +47,25 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public class SearchSpotifyTask extends AsyncTask<Void, Void, Void>
+    {
+        @Override
+        protected Void doInBackground(Void... strings) {
+            SpotifyApi api = new SpotifyApi();
+            SpotifyService service = api.getService();
+
+            ArtistsPager results = service.searchArtists("Paul");
+            List<Artist> artists = results.artists.items;
+            for (int i = 0; i < artists.size(); i++) {
+                Artist artist = artists.get(i);
+                Log.i(LOG_TAG, i + " " + artist.name + " Images: " + artist.images.size());
+                if (artist.images.size() > 0) {
+                    Log.i(LOG_TAG, artist.images.get(0).url);
+                }
+            }
+            return null;
+        }
     }
 }
