@@ -13,6 +13,8 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
+import kaaes.spotify.webapi.android.models.Artist;
+
 public class ArtistAdapter extends ArrayAdapter<Artist> {
 
     private static final String LOG_TAG = ArtistAdapter.class.getSimpleName();
@@ -24,7 +26,13 @@ public class ArtistAdapter extends ArrayAdapter<Artist> {
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
         Artist artist = getItem(position);
+        String imageUrl = null;
         Context context = getContext();
+
+        // Only fetch an image URL if Spotify returns at least one
+        if (artist.images.size() > 0) {
+            imageUrl = artist.images.get(0).url;
+        }
 
         if (convertView == null) {
             convertView = LayoutInflater.from(context).inflate(R.layout.list_item_artist, parent, false);
@@ -32,9 +40,11 @@ public class ArtistAdapter extends ArrayAdapter<Artist> {
 
         ImageView artistImageView = (ImageView) convertView.findViewById(R.id.list_item_artist_icon);
         Picasso.with(context)
-                .load(artist.imageUrl)
-                .resize(50, 50)
+                .load(imageUrl)
+                .resize(100, 100)
                 .centerCrop()
+                .placeholder(R.drawable.ic_help_black_24dp)
+                .error(R.drawable.ic_help_black_24dp)
                 .into(artistImageView);
 
         TextView artistNameView = (TextView) convertView.findViewById(R.id.list_item_artist_name);

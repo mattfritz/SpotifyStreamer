@@ -1,5 +1,6 @@
 package com.mattfritz.spotifystreamer;
 
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -7,23 +8,28 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Artist;
+import kaaes.spotify.webapi.android.models.ArtistsPager;
+
 public class MainActivityFragment extends Fragment {
 
-    private ArtistAdapter artistAdapter;
+    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
 
-    Artist[] artists = {
-            new Artist("Test Dude", "https://i.scdn.co/image/96e2e59a1bf0b90cce97035ca48ad017cb9937c9"),
-            new Artist("Test Another", "https://i.scdn.co/image/96e2e59a1bf0b90cce97035ca48ad017cb9937c9"),
-            new Artist("Test Bono", "https://i.scdn.co/image/96e2e59a1bf0b90cce97035ca48ad017cb9937c9"),
-            new Artist("Test Wat", "https://i.scdn.co/image/96e2e59a1bf0b90cce97035ca48ad017cb9937c9")
-    };
+    ArtistAdapter artistAdapter;
 
     public MainActivityFragment() {
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        SearchSpotifyTask task = new SearchSpotifyTask();
+        task.execute();
     }
 
     @Override
@@ -31,11 +37,33 @@ public class MainActivityFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-        artistAdapter = new ArtistAdapter(getActivity(), Arrays.asList(artists));
+        artistAdapter = new ArtistAdapter(
+                getActivity(),
+                new ArrayList<Artist>());
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_artist);
         listView.setAdapter(artistAdapter);
 
         return rootView;
+    }
+
+    public class SearchSpotifyTask extends AsyncTask<Void, Void, List<Artist>>
+    {
+        @Override
+        protected List<Artist> doInBackground(Void... strings) {
+            SpotifyApi api = new SpotifyApi();
+            SpotifyService service = api.getService();
+
+            ArtistsPager results = service.searchArtists("Paul");
+            return results.artists.items;
+        }
+
+        @Override
+        protected void onPostExecute(List<Artist> artists) {
+            if (artists != null) {
+                artistAdapter.clear();
+                artistAdapter.addAll(artists);
+            }
+        }
     }
 }
