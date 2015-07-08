@@ -10,7 +10,7 @@
     <SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/searchView"
+        android:id="@+id/search"
         android:gravity="top"
         android:queryHint="@string/search_query_hint"
         android:imeOptions="actionSearch"
