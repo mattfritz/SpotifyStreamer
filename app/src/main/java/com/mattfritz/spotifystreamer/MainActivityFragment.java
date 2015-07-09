@@ -1,10 +1,12 @@
 package com.mattfritz.spotifystreamer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
 
@@ -40,6 +42,16 @@ public class MainActivityFragment extends Fragment {
         ListView listView = (ListView) rootView.findViewById(R.id.listview_artist);
         listView.setAdapter(artistAdapter);
 
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Artist artist = (Artist) parent.getItemAtPosition(position);
+                Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class)
+                        .putExtra(Intent.EXTRA_TEXT, artist.id);
+                startActivity(detailIntent);
+            }
+        });
+
         final SearchView searchView = (SearchView) rootView.findViewById(R.id.search);
 
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
@@ -57,7 +69,7 @@ public class MainActivityFragment extends Fragment {
 
                     @Override
                     public void failure(RetrofitError error) {
-
+                        // TODO: show a toast or add a custom textview to indicate failure
                     }
                 });
                 return true;
