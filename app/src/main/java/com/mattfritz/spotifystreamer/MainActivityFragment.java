@@ -1,15 +1,18 @@
 package com.mattfritz.spotifystreamer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SearchView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -68,12 +71,28 @@ public class MainActivityFragment extends Fragment {
                         if (artists != null) {
                             artistAdapter.clear();
                             artistAdapter.addAll(artists);
+
+                            if (artists.isEmpty()) {
+                                Context context = getActivity().getApplicationContext();
+                                CharSequence text = "No artists found, please refine your search";
+                                int duration = Toast.LENGTH_SHORT;
+
+                                Toast.makeText(context, text, duration).show();
+                            }
                         }
                     }
 
                     @Override
                     public void failure(RetrofitError error) {
-                        // TODO: show a toast or add a custom textview to indicate failure
+                        Context context = getActivity().getApplicationContext();
+                        CharSequence text = "Could not retrieve artists";
+                        int duration = Toast.LENGTH_SHORT;
+
+                        Toast.makeText(context, text, duration).show();
+
+                        if (error.getResponse() != null) {
+                            Log.e(LOG_TAG, error.getMessage());
+                        }
                     }
                 });
                 return true;
@@ -85,6 +104,7 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+        // Since Artist is not serializable, requery for results
         if (savedInstanceState != null) {
             mLastQuery = savedInstanceState.getString(QUERY_CACHE);
             if (!TextUtils.isEmpty(mLastQuery)) {

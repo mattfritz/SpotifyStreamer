@@ -1,5 +1,6 @@
 package com.mattfritz.spotifystreamer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -64,12 +66,25 @@ public class TopTracksActivityFragment extends Fragment {
                     if (tracksList != null) {
                         trackAdapter.clear();
                         trackAdapter.addAll(tracksList);
+
+                        if (tracksList.isEmpty()) {
+                            Context context = getActivity().getApplicationContext();
+                            CharSequence text = "No top tracks found for this artist";
+                            int duration = Toast.LENGTH_SHORT;
+
+                            Toast.makeText(context, text, duration).show();
+                        }
                     }
                 }
 
                 @Override
                 public void failure(RetrofitError error) {
-                    // TODO: show a toast or add a custom textview to indicate failure
+                    Context context = getActivity().getApplicationContext();
+                    CharSequence text = "Could not retrieve top tracks";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast.makeText(context, text, duration).show();
+
                     if (error.getResponse() != null) {
                         Log.e(LOG_TAG, error.getMessage());
                     }
