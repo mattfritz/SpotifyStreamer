@@ -3,6 +3,7 @@ package com.mattfritz.spotifystreamer;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,8 +25,10 @@ import retrofit.client.Response;
 public class MainActivityFragment extends Fragment {
 
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private static final String QUERY_CACHE = "term";
 
     private SpotifyService mService = new SpotifyApi().getService();
+    private String mLastQuery = "";
 
     public MainActivityFragment() {
     }
@@ -57,6 +60,7 @@ public class MainActivityFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                mLastQuery = query;
                 mService.searchArtists(query, new Callback<ArtistsPager>() {
                     @Override
                     public void success(ArtistsPager artistsPager, Response response) {
@@ -81,6 +85,19 @@ public class MainActivityFragment extends Fragment {
             }
         });
 
+        if (savedInstanceState != null) {
+            mLastQuery = savedInstanceState.getString(QUERY_CACHE);
+            if (!TextUtils.isEmpty(mLastQuery)) {
+                searchView.setQuery(mLastQuery, true);
+            }
+        }
+
         return rootView;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(QUERY_CACHE, mLastQuery);
+        super.onSaveInstanceState(outState);
     }
 }
