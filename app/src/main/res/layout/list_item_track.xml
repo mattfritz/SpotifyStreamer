@@ -7,14 +7,19 @@
     android:minHeight="?android:attr/listPreferredItemHeight" >
 
     <ImageView
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="75dp"
+        android:layout_height="75dp"
         android:id="@+id/list_item_album_icon"
+        android:padding="5dp"
+        android:layout_margin="5dp"
         android:contentDescription="@string/list_item_album_content" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:padding="5dp"
+        android:layout_margin="5dp"
+        android:gravity="center_vertical"
         android:orientation="vertical" >
 
         <TextView
