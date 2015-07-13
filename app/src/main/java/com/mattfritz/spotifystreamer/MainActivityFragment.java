@@ -21,7 +21,7 @@ public class MainActivityFragment extends Fragment {
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     private static final String QUERY_CACHE = "term";
 
-    private com.mattfritz.spotifystreamer.SpotifyApi api = new com.mattfritz.spotifystreamer.SpotifyApi();
+    private SpotifyApi spotifyApi = new SpotifyApi();
     private ArrayList<Artist> mArtists;
     private ArtistAdapter mArtistAdapter;
 
@@ -88,7 +88,7 @@ public class MainActivityFragment extends Fragment {
         @Override
         protected ArrayList<Artist> doInBackground(String... params) {
             try {
-                mArtists = api.searchArtists(params[0]);
+                mArtists = spotifyApi.searchArtists(params[0]);
                 return mArtists;
             } catch (Exception e) {
                 Log.e(LOG_TAG, e.getMessage());

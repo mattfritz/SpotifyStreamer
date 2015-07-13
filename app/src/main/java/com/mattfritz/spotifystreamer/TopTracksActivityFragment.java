@@ -2,6 +2,7 @@ package com.mattfritz.spotifystreamer;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
@@ -12,26 +13,14 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
 
-import kaaes.spotify.webapi.android.SpotifyApi;
-import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.Tracks;
-import retrofit.Callback;
-import retrofit.RetrofitError;
-import retrofit.client.Response;
-
-/**
- * A placeholder fragment containing a simple view.
- */
 public class TopTracksActivityFragment extends Fragment {
 
     private static final String LOG_TAG = TopTracksActivityFragment.class.getSimpleName();
-
-    private SpotifyService mService = new SpotifyApi().getService();
+    private static final String QUERY_CACHE = "top_tracks";
+    private SpotifyApi spotifyApi = new SpotifyApi();
+    private TrackAdapter mTrackAdapter;
+    private ArrayList<Track> mTracks;
 
 
     public TopTracksActivityFragment() {
@@ -43,54 +32,70 @@ public class TopTracksActivityFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
         Intent intent = getActivity().getIntent();
-        final TrackAdapter trackAdapter = new TrackAdapter(
+        mTrackAdapter = new TrackAdapter(
                 getActivity(),
                 new ArrayList<Track>());
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_tracks);
-        listView.setAdapter(trackAdapter);
+        listView.setAdapter(mTrackAdapter);
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-
             String artistId = intent.getStringExtra(Intent.EXTRA_TEXT);
+            FetchTopTracksTask task = new FetchTopTracksTask();
+            task.execute(artistId);
+        }
 
-            // Add country code until Spotify wrapper is patched
-            // https://github.com/kaaes/spotify-web-api-android/pull/83
-            Map<String, Object> options = new Hashtable<String, Object>();
-            options.put("country", "US");
+        if (savedInstanceState != null) {
+            mTracks = savedInstanceState.getParcelableArrayList(QUERY_CACHE);
+            mTrackAdapter.clear();
+            mTrackAdapter.addAll(mTracks);
+        }
 
-            mService.getArtistTopTrack(artistId, options, new Callback<Tracks>() {
-                @Override
-                public void success(Tracks tracks, Response response) {
-                    List<Track> tracksList = tracks.tracks;
-                    if (tracksList != null) {
-                        trackAdapter.clear();
-                        trackAdapter.addAll(tracksList);
+        return rootView;
+    }
 
-                        if (tracksList.isEmpty()) {
-                            Context context = getActivity().getApplicationContext();
-                            CharSequence text = "No top tracks found for this artist";
-                            int duration = Toast.LENGTH_SHORT;
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(QUERY_CACHE, mTracks);
+        super.onSaveInstanceState(outState);
+    }
 
-                            Toast.makeText(context, text, duration).show();
-                        }
-                    }
-                }
+    public class FetchTopTracksTask extends AsyncTask<String, Void, ArrayList<Track>> {
 
-                @Override
-                public void failure(RetrofitError error) {
+        private final String LOG_TAG = FetchTopTracksTask.class.getSimpleName();
+
+        @Override
+        protected ArrayList<Track> doInBackground(String... params) {
+            try {
+                mTracks = spotifyApi.getArtistTopTracks(params[0]);
+                return mTracks;
+            } catch (Exception e) {
+                Log.e(LOG_TAG, e.getMessage());
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Track> tracks) {
+            if (tracks != null) {
+                mTrackAdapter.clear();
+                mTrackAdapter.addAll(tracks);
+
+                if (tracks.isEmpty()) {
                     Context context = getActivity().getApplicationContext();
-                    CharSequence text = "Could not retrieve top tracks";
+                    CharSequence text = "No top tracks found for this artists";
                     int duration = Toast.LENGTH_SHORT;
 
                     Toast.makeText(context, text, duration).show();
-
-                    if (error.getResponse() != null) {
-                        Log.e(LOG_TAG, error.getMessage());
-                    }
                 }
-            });
+            } else {
+                Context context = getActivity().getApplicationContext();
+                CharSequence text = "Could not retrieve top tracks";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast.makeText(context, text, duration).show();
+            }
         }
-        return rootView;
     }
 }

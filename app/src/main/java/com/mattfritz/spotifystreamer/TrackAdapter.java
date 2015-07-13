@@ -13,7 +13,6 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.Track;
 
 public class TrackAdapter extends ArrayAdapter<Track> {
 
@@ -30,8 +29,8 @@ public class TrackAdapter extends ArrayAdapter<Track> {
         Context context = getContext();
 
         // Only fetch an image URL if Spotify returns at least one
-        if (track.album.images.size() > 0) {
-            imageUrl = track.album.images.get(0).url;
+        if (track.albumImageUrl != null) {
+            imageUrl = track.albumImageUrl;
         }
 
         if (convertView == null) {
@@ -48,10 +47,10 @@ public class TrackAdapter extends ArrayAdapter<Track> {
                 .into(albumImageView);
 
         TextView trackNameView = (TextView) convertView.findViewById(R.id.list_item_track_name);
-        trackNameView.setText(track.name);
+        trackNameView.setText(track.trackName);
 
         TextView albumNameView = (TextView) convertView.findViewById(R.id.list_item_album_name);
-        albumNameView.setText(track.album.name);
+        albumNameView.setText(track.albumName);
 
         return convertView;
     }

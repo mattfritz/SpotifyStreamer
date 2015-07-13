@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 public class SpotifyApi {
+
     private final OkHttpClient client = new OkHttpClient();
 
     public ArrayList<Artist> searchArtists(String query) throws Exception {
@@ -54,5 +55,48 @@ public class SpotifyApi {
         }
 
         return artists;
+    }
+
+    public ArrayList<Track> getArtistTopTracks(String id) throws Exception {
+        Uri.Builder builder = new Uri.Builder();
+        builder.scheme("https")
+                .authority("api.spotify.com")
+                .appendPath("v1")
+                .appendPath("artists")
+                .appendEncodedPath(id)
+                .appendPath("top-tracks")
+                .appendQueryParameter("country", "US");
+
+        String url = builder.build().toString();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .build();
+
+        Response response = client.newCall(request).execute();
+        if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+        String result = response.body().string();
+        ArrayList<Track> tracks = new ArrayList<>();
+
+        JSONArray jsonBody = new JSONObject(result).getJSONArray("tracks");
+
+        for (int i = 0; i < jsonBody.length(); i++) {
+            String albumImageUrl;
+            JSONObject track = jsonBody.getJSONObject(i);
+            String trackName = track.getString("name");
+            JSONObject album = track.getJSONObject("album");
+            String albumName = album.getString("name");
+            JSONArray images = album.getJSONArray("images");
+            try {
+                albumImageUrl = images.getJSONObject(0).getString("url");
+            } catch (Exception e) {
+                albumImageUrl = null;
+            }
+            String trackId = track.getString("id");
+            tracks.add(new Track(trackName, albumName, albumImageUrl, trackId));
+        }
+
+        return tracks;
     }
 }
