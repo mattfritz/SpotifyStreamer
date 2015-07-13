@@ -21,6 +21,7 @@ public class TopTracksActivityFragment extends Fragment {
     private SpotifyApi spotifyApi = new SpotifyApi();
     private TrackAdapter mTrackAdapter;
     private ArrayList<Track> mTracks;
+    private ListView mListView;
 
 
     public TopTracksActivityFragment() {
@@ -36,8 +37,8 @@ public class TopTracksActivityFragment extends Fragment {
                 getActivity(),
                 new ArrayList<Track>());
 
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_tracks);
-        listView.setAdapter(mTrackAdapter);
+        mListView = (ListView) rootView.findViewById(R.id.listview_tracks);
+        mListView.setAdapter(mTrackAdapter);
 
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String artistId = intent.getStringExtra(Intent.EXTRA_TEXT);
@@ -47,8 +48,11 @@ public class TopTracksActivityFragment extends Fragment {
 
         if (savedInstanceState != null) {
             mTracks = savedInstanceState.getParcelableArrayList(QUERY_CACHE);
+            int top = savedInstanceState.getInt("list_position_top");
+            int index = savedInstanceState.getInt("list_position_index");
             mTrackAdapter.clear();
             mTrackAdapter.addAll(mTracks);
+            mListView.setSelectionFromTop(index, top);
         }
 
         return rootView;
@@ -56,6 +60,17 @@ public class TopTracksActivityFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
+        int top;
+        int index = mListView.getFirstVisiblePosition();
+        View v = mListView.getChildAt(index);
+        if (v == null) {
+            top = 0;
+        } else {
+            top = (v.getTop() - mListView.getPaddingTop());
+        }
+
+        outState.putInt("list_position_top", top);
+        outState.putInt("list_position_index", index);
         outState.putParcelableArrayList(QUERY_CACHE, mTracks);
         super.onSaveInstanceState(outState);
     }
