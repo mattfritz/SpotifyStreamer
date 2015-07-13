@@ -13,25 +13,23 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-import kaaes.spotify.webapi.android.models.Artist;
-
-public class ArtistAdapter extends ArrayAdapter<Artist> {
+public class ArtistAdapter extends ArrayAdapter<com.mattfritz.spotifystreamer.Artist> {
 
     private static final String LOG_TAG = ArtistAdapter.class.getSimpleName();
 
-    public ArtistAdapter(Activity context, List<Artist> artists) {
+    public ArtistAdapter(Activity context, List<com.mattfritz.spotifystreamer.Artist> artists) {
         super(context, 0, artists);
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        Artist artist = getItem(position);
+        com.mattfritz.spotifystreamer.Artist artist = getItem(position);
         String imageUrl = null;
         Context context = getContext();
 
         // Only fetch an image URL if Spotify returns at least one
-        if (artist.images.size() > 0) {
-            imageUrl = artist.images.get(0).url;
+        if (artist.imageUrl != null) {
+            imageUrl = artist.imageUrl;
         }
 
         if (convertView == null) {
