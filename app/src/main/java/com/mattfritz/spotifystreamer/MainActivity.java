@@ -8,10 +8,22 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String TRACKSFRAGMENT_TAG = "TFTAG";
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        if (findViewById(R.id.top_tracks_container) != null) {
+            if (savedInstanceState == null) {
+                getSupportFragmentManager()
+                        .beginTransaction()
+                        .replace(R.id.top_tracks_container,
+                                new TopTracksActivityFragment(),
+                                TRACKSFRAGMENT_TAG)
+                        .commit();
+            }
+        }
     }
 
 

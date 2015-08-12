@@ -69,8 +69,12 @@ public class MainActivityFragment extends Fragment {
 
         if (savedInstanceState != null) {
             mArtists = savedInstanceState.getParcelableArrayList(QUERY_CACHE);
-            mArtistAdapter.clear();
-            mArtistAdapter.addAll(mArtists);
+
+            // TODO: Make sure mArtists is never null
+            if (mArtists != null) {
+                mArtistAdapter.clear();
+                mArtistAdapter.addAll(mArtists);
+            }
         }
 
         return rootView;

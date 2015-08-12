@@ -58,8 +58,11 @@ public class TopTracksActivityFragment extends Fragment {
             int top = savedInstanceState.getInt("list_position_top");
             int index = savedInstanceState.getInt("list_position_index");
             mTrackAdapter.clear();
-            mTrackAdapter.addAll(mTracks);
-            mListView.setSelectionFromTop(index, top);
+            // TODO: Make sure mTracks always has a value
+            if (mTracks != null) {
+                mTrackAdapter.addAll(mTracks);
+                mListView.setSelectionFromTop(index, top);
+            }
         }
 
         return rootView;

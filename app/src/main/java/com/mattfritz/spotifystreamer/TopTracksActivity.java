@@ -13,6 +13,12 @@ public class TopTracksActivity extends ActionBarActivity {
         setContentView(R.layout.activity_top_tracks);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(R.string.title_activity_top_tracks);
+
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.top_tracks_container, new TopTracksActivityFragment())
+                    .commit();
+        }
     }
 
 
