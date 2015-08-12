@@ -5,6 +5,6 @@
     <string name="search_query_hint">Search Artists</string>
 
     <string name="list_item_artist_content">Artist Image</string>
-    <string name="title_activity_top_tracks">Top Tracks</string>
+    <string name="title_activity_top_tracks">Top 10 Tracks</string>
     <string name="list_item_album_content">Album Art</string>
 </resources>

@@ -45,7 +45,8 @@ public class MainActivityFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Artist artist = (Artist) parent.getItemAtPosition(position);
                 Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, artist.id);
+                        .putExtra(Intent.EXTRA_TEXT, artist.id)
+                        .putExtra(Intent.EXTRA_TITLE, artist.name);
                 startActivity(detailIntent);
             }
         });
