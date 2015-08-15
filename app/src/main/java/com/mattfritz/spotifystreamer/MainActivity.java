@@ -9,12 +9,14 @@ public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     private final String TRACKSFRAGMENT_TAG = "TFTAG";
+    private boolean mTwoPane;
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         if (findViewById(R.id.top_tracks_container) != null) {
+            mTwoPane = true;
             if (savedInstanceState == null) {
                 getSupportFragmentManager()
                         .beginTransaction()
@@ -23,7 +25,14 @@ public class MainActivity extends ActionBarActivity {
                                 TRACKSFRAGMENT_TAG)
                         .commit();
             }
+        } else {
+            mTwoPane = false;
         }
+
+        MainActivityFragment mf = ((MainActivityFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.artist_fragment));
+
+        mf.setTwoPane(mTwoPane);
     }
 
 

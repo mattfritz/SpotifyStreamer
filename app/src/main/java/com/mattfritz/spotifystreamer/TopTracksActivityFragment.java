@@ -20,6 +20,9 @@ public class TopTracksActivityFragment extends Fragment {
 
     private static final String LOG_TAG = TopTracksActivityFragment.class.getSimpleName();
     private static final String QUERY_CACHE = "top_tracks";
+    private final String ARTIST_ID_TAG = "ARTIST_ID";
+    private final String ARTIST_NAME_TAG = "ARTIST_NAME";
+
     private SpotifyApi spotifyApi = new SpotifyApi();
     private TrackAdapter mTrackAdapter;
     private ArrayList<Track> mTracks;
@@ -35,6 +38,7 @@ public class TopTracksActivityFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_top_tracks, container, false);
         Intent intent = getActivity().getIntent();
+        Bundle arguments = getArguments();
         mTrackAdapter = new TrackAdapter(
                 getActivity(),
                 new ArrayList<Track>());
@@ -45,6 +49,15 @@ public class TopTracksActivityFragment extends Fragment {
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
             String artistId = intent.getStringExtra(Intent.EXTRA_TEXT);
             String artistName = intent.getStringExtra(Intent.EXTRA_TITLE);
+
+            ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+            actionBar.setSubtitle(artistName);
+
+            FetchTopTracksTask task = new FetchTopTracksTask();
+            task.execute(artistId);
+        } else if (arguments != null) {
+            String artistId = arguments.getString(ARTIST_ID_TAG);
+            String artistName = arguments.getString(ARTIST_NAME_TAG);
 
             ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
             actionBar.setSubtitle(artistName);

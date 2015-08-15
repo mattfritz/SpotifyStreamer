@@ -20,10 +20,14 @@ public class MainActivityFragment extends Fragment {
 
     private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
     private static final String QUERY_CACHE = "term";
+    private final String TRACKSFRAGMENT_TAG = "TFTAG";
+    private final String ARTIST_ID_TAG = "ARTIST_ID";
+    private final String ARTIST_NAME_TAG = "ARTIST_NAME";
 
     private SpotifyApi spotifyApi = new SpotifyApi();
     private ArrayList<Artist> mArtists;
     private ArtistAdapter mArtistAdapter;
+    private boolean mTwoPane;
 
     public MainActivityFragment() {
     }
@@ -44,10 +48,24 @@ public class MainActivityFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Artist artist = (Artist) parent.getItemAtPosition(position);
-                Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, artist.id)
-                        .putExtra(Intent.EXTRA_TITLE, artist.name);
-                startActivity(detailIntent);
+
+                if (mTwoPane) {
+                    Bundle args = new Bundle();
+                    args.putString(ARTIST_ID_TAG, artist.id);
+                    args.putString(ARTIST_NAME_TAG, artist.name);
+
+                    TopTracksActivityFragment ttfragment = new TopTracksActivityFragment();
+                    ttfragment.setArguments(args);
+
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.top_tracks_container, ttfragment, TRACKSFRAGMENT_TAG)
+                            .commit();
+                } else {
+                    Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class)
+                            .putExtra(Intent.EXTRA_TEXT, artist.id)
+                            .putExtra(Intent.EXTRA_TITLE, artist.name);
+                    startActivity(detailIntent);
+                }
             }
         });
 
@@ -125,4 +143,7 @@ public class MainActivityFragment extends Fragment {
         }
     }
 
+    public void setTwoPane(boolean twoPane) {
+        mTwoPane = twoPane;
+    }
 }
