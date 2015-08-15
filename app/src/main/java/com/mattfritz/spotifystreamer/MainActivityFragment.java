@@ -41,7 +41,7 @@ public class MainActivityFragment extends Fragment {
                 getActivity(),
                 new ArrayList<Artist>());
 
-        ListView listView = (ListView) rootView.findViewById(R.id.listview_artist);
+        final ListView listView = (ListView) rootView.findViewById(R.id.listview_artist);
         listView.setAdapter(mArtistAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -76,6 +76,7 @@ public class MainActivityFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                listView.setItemChecked(-1, true);
                 FetchArtistsTask task = new FetchArtistsTask();
                 task.execute(query);
                 return true;
@@ -127,6 +128,7 @@ public class MainActivityFragment extends Fragment {
             if (artists != null) {
                 mArtistAdapter.clear();
                 mArtistAdapter.addAll(artists);
+
 
                 if (artists.isEmpty()) {
                     Context context = getActivity().getApplicationContext();
