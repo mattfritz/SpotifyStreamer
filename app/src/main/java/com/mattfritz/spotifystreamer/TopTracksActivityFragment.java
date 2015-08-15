@@ -46,20 +46,20 @@ public class TopTracksActivityFragment extends Fragment {
         mListView = (ListView) rootView.findViewById(R.id.listview_tracks);
         mListView.setAdapter(mTrackAdapter);
 
+        String artistId = null;
+        String artistName = null;
+
         if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-            String artistId = intent.getStringExtra(Intent.EXTRA_TEXT);
-            String artistName = intent.getStringExtra(Intent.EXTRA_TITLE);
-
-            ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
-            actionBar.setSubtitle(artistName);
-
-            FetchTopTracksTask task = new FetchTopTracksTask();
-            task.execute(artistId);
+            artistId = intent.getStringExtra(Intent.EXTRA_TEXT);
+            artistName = intent.getStringExtra(Intent.EXTRA_TITLE);
         } else if (arguments != null) {
-            String artistId = arguments.getString(ARTIST_ID_TAG);
-            String artistName = arguments.getString(ARTIST_NAME_TAG);
+            artistId = arguments.getString(ARTIST_ID_TAG);
+            artistName = arguments.getString(ARTIST_NAME_TAG);
+        }
 
+        if (artistId != null && artistName != null) {
             ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+            actionBar.setTitle("Top 10 Tracks");
             actionBar.setSubtitle(artistName);
 
             FetchTopTracksTask task = new FetchTopTracksTask();
