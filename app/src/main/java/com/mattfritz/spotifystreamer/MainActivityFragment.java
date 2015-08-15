@@ -50,6 +50,8 @@ public class MainActivityFragment extends Fragment {
                 Artist artist = (Artist) parent.getItemAtPosition(position);
 
                 if (mTwoPane) {
+                    view.setSelected(true);
+
                     Bundle args = new Bundle();
                     args.putString(ARTIST_ID_TAG, artist.id);
                     args.putString(ARTIST_NAME_TAG, artist.name);

@@ -19,6 +19,7 @@
     <ListView
         android:id="@+id/listview_artist"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        style="@style/ArtistListStyle" />
 
 </LinearLayout>
