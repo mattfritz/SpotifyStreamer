@@ -16,9 +16,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class TopTracksActivityFragment extends Fragment {
+public class TopTracksFragment extends Fragment {
 
-    private static final String LOG_TAG = TopTracksActivityFragment.class.getSimpleName();
+    private static final String LOG_TAG = TopTracksFragment.class.getSimpleName();
     private static final String QUERY_CACHE = "top_tracks";
     private final String ARTIST_ID_TAG = "ARTIST_ID";
     private final String ARTIST_NAME_TAG = "ARTIST_NAME";
@@ -29,7 +29,7 @@ public class TopTracksActivityFragment extends Fragment {
     private ListView mListView;
 
 
-    public TopTracksActivityFragment() {
+    public TopTracksFragment() {
     }
 
     @Override

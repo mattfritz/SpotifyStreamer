@@ -5,9 +5,9 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends ActionBarActivity {
+public class ArtistsActivity extends ActionBarActivity {
 
-    private final String LOG_TAG = MainActivity.class.getSimpleName();
+    private final String LOG_TAG = ArtistsActivity.class.getSimpleName();
     private final String TRACKSFRAGMENT_TAG = "TFTAG";
     private boolean mTwoPane;
 
@@ -21,7 +21,7 @@ public class MainActivity extends ActionBarActivity {
                 getSupportFragmentManager()
                         .beginTransaction()
                         .replace(R.id.top_tracks_container,
-                                new TopTracksActivityFragment(),
+                                new TopTracksFragment(),
                                 TRACKSFRAGMENT_TAG)
                         .commit();
             }
@@ -29,7 +29,7 @@ public class MainActivity extends ActionBarActivity {
             mTwoPane = false;
         }
 
-        MainActivityFragment mf = ((MainActivityFragment) getSupportFragmentManager()
+        ArtistsFragment mf = ((ArtistsFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.artist_fragment));
 
         mf.setTwoPane(mTwoPane);

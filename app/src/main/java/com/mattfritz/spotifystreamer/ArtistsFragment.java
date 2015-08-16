@@ -16,9 +16,9 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 
-public class MainActivityFragment extends Fragment {
+public class ArtistsFragment extends Fragment {
 
-    private static final String LOG_TAG = MainActivityFragment.class.getSimpleName();
+    private static final String LOG_TAG = ArtistsFragment.class.getSimpleName();
     private static final String QUERY_CACHE = "term";
     private final String TRACKSFRAGMENT_TAG = "TFTAG";
     private final String ARTIST_ID_TAG = "ARTIST_ID";
@@ -29,7 +29,7 @@ public class MainActivityFragment extends Fragment {
     private ArtistAdapter mArtistAdapter;
     private boolean mTwoPane;
 
-    public MainActivityFragment() {
+    public ArtistsFragment() {
     }
 
     @Override
@@ -56,7 +56,7 @@ public class MainActivityFragment extends Fragment {
                     args.putString(ARTIST_ID_TAG, artist.id);
                     args.putString(ARTIST_NAME_TAG, artist.name);
 
-                    TopTracksActivityFragment ttfragment = new TopTracksActivityFragment();
+                    TopTracksFragment ttfragment = new TopTracksFragment();
                     ttfragment.setArguments(args);
 
                     getActivity().getSupportFragmentManager().beginTransaction()
