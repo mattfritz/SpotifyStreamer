@@ -93,8 +93,12 @@ public class SpotifyApi {
             } catch (Exception e) {
                 albumImageUrl = null;
             }
+            String previewUrl = track.getString("preview_url");
             String trackId = track.getString("id");
-            tracks.add(new Track(trackName, albumName, albumImageUrl, trackId));
+            JSONArray artists = track.getJSONArray("artists");
+            JSONObject artist = artists.getJSONObject(0);
+            String artistName = artist.getString("name");
+            tracks.add(new Track(trackName, albumName, albumImageUrl, trackId, previewUrl, artistName));
         }
 
         return tracks;

@@ -91,6 +91,7 @@ public class TopTracksFragment extends Fragment {
                     // Only show dialog box if in two pane mode
                     Bundle args = new Bundle();
                     args.putBoolean(SHOW_DIALOG_TAG, true);
+                    args.putParcelableArrayList("TRACKS_PLAYLIST", mTracks);
                     fragment.setArguments(args);
 
                     getFragmentManager().beginTransaction()
@@ -98,6 +99,7 @@ public class TopTracksFragment extends Fragment {
                             .commit();
                 } else {
                     Intent intent = new Intent(getActivity(), TrackPlayer.class);
+                    intent.putExtra("TRACKS_PLAYLIST", mTracks);
                     startActivity(intent);
                 }
             }
