@@ -25,6 +25,10 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".ArtistsActivity" />
         </activity>
+        <activity
+            android:name=".TrackPlayer"
+            android:label="@string/title_activity_track_player" >
+        </activity>
     </application>
 
 </manifest>

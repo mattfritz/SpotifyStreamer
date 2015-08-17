@@ -6,4 +6,9 @@
     <string name="list_item_artist_content">Artist Image</string>
     <string name="title_activity_top_tracks">Top 10 Tracks</string>
     <string name="list_item_album_content">Album Art</string>
+    <string name="title_activity_track_player">TrackPlayer</string>
+
+    <!-- TEMP STRINGS FOR DIALOGFRAGMENT TESTING -->
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
 </resources>

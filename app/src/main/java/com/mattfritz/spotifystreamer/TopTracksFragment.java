@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -22,6 +23,7 @@ public class TopTracksFragment extends Fragment {
     private static final String QUERY_CACHE = "top_tracks";
     private final String ARTIST_ID_TAG = "ARTIST_ID";
     private final String ARTIST_NAME_TAG = "ARTIST_NAME";
+    private final String PLAYER_FRAGMENT_TAG = "PLAYER_FRAGMENT_TAG";
 
     private SpotifyApi spotifyApi = new SpotifyApi();
     private TrackAdapter mTrackAdapter;
@@ -77,6 +79,16 @@ public class TopTracksFragment extends Fragment {
                 mListView.setSelectionFromTop(index, top);
             }
         }
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                TrackPlayerFragment fragment = new TrackPlayerFragment();
+                getFragmentManager().beginTransaction()
+                        .add(fragment, PLAYER_FRAGMENT_TAG)
+                        .commit();
+            }
+        });
 
         return rootView;
     }
