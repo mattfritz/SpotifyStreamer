@@ -24,6 +24,7 @@ public class TopTracksFragment extends Fragment {
     private final String ARTIST_ID_TAG = "ARTIST_ID";
     private final String ARTIST_NAME_TAG = "ARTIST_NAME";
     private final String PLAYER_FRAGMENT_TAG = "PLAYER_FRAGMENT_TAG";
+    private final String SHOW_DIALOG_TAG = "SHOW_DIALOG";
 
     private SpotifyApi spotifyApi = new SpotifyApi();
     private TrackAdapter mTrackAdapter;
@@ -86,12 +87,17 @@ public class TopTracksFragment extends Fragment {
                 // TODO: Refactor this two pane state into something more managable
                 if (getActivity().findViewById(R.id.artist_fragment) != null) {
                     TrackPlayerFragment fragment = new TrackPlayerFragment();
+
+                    // Only show dialog box if in two pane mode
+                    Bundle args = new Bundle();
+                    args.putBoolean(SHOW_DIALOG_TAG, true);
+                    fragment.setArguments(args);
+
                     getFragmentManager().beginTransaction()
                             .add(fragment, PLAYER_FRAGMENT_TAG)
                             .commit();
                 } else {
                     Intent intent = new Intent(getActivity(), TrackPlayer.class);
-                    intent.putExtra("TWO_PANE", false);
                     startActivity(intent);
                 }
             }

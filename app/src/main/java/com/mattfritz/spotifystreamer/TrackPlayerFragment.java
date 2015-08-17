@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 
 public class TrackPlayerFragment extends DialogFragment {
 
+    private final String SHOW_DIALOG_TAG = "SHOW_DIALOG";
+
     public static TrackPlayerFragment newInstance() {
         return new TrackPlayerFragment();
     }
@@ -15,8 +17,13 @@ public class TrackPlayerFragment extends DialogFragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // TODO: Set this based on two pane layout (currently only works in phone mode)
-        setShowsDialog(false);
+        Bundle args = getArguments();
+
+        if (args != null) {
+            setShowsDialog(args.getBoolean(SHOW_DIALOG_TAG));
+        } else {
+            setShowsDialog(false);
+        }
     }
 
     @Override
