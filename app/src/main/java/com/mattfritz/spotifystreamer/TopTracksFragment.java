@@ -83,10 +83,17 @@ public class TopTracksFragment extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                TrackPlayerFragment fragment = new TrackPlayerFragment();
-                getFragmentManager().beginTransaction()
-                        .add(fragment, PLAYER_FRAGMENT_TAG)
-                        .commit();
+                // TODO: Refactor this two pane state into something more managable
+                if (getActivity().findViewById(R.id.artist_fragment) != null) {
+                    TrackPlayerFragment fragment = new TrackPlayerFragment();
+                    getFragmentManager().beginTransaction()
+                            .add(fragment, PLAYER_FRAGMENT_TAG)
+                            .commit();
+                } else {
+                    Intent intent = new Intent(getActivity(), TrackPlayer.class);
+                    intent.putExtra("TWO_PANE", false);
+                    startActivity(intent);
+                }
             }
         });
 

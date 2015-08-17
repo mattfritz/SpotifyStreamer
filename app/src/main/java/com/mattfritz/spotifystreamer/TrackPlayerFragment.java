@@ -13,6 +13,13 @@ public class TrackPlayerFragment extends DialogFragment {
     }
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        // TODO: Set this based on two pane layout (currently only works in phone mode)
+        setShowsDialog(false);
+    }
+
+    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_track_player, container, false);
