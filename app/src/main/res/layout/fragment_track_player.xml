@@ -10,28 +10,24 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Stone Temple Pilots"
         android:id="@+id/player_artist_name_textview" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Core"
         android:id="@+id/player_album_name_textview" />
 
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:src="@drawable/abc_ic_voice_search_api_mtrl_alpha"
         android:id="@+id/player_album_art_imageview" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_horizontal"
-        android:text="Plush"
         android:id="@+id/player_track_name_textview" />
 
     <SeekBar
@@ -48,7 +44,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0:00"
-            android:gravity="left"
+            android:gravity="start"
             android:id="@+id/player_start_time" />
 
         <TextView
@@ -56,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="0:30"
-            android:gravity="right"
+            android:gravity="end"
             android:id="@+id/player_end_time" />
 
     </LinearLayout>
