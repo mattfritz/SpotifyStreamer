@@ -50,6 +50,7 @@ public class TrackPlayerFragment extends DialogFragment {
         }
 
         if (tracks != null) {
+            // TODO: get track by position from tracks list
             Track track = tracks.get(0);
 
             TextView artistNameTextView = (TextView) rootView.findViewById(R.id.player_artist_name_textview);
@@ -61,7 +62,7 @@ public class TrackPlayerFragment extends DialogFragment {
             ImageView albumArtImageView = (ImageView) rootView.findViewById(R.id.player_album_art_imageview);
             Picasso.with(getActivity())
                     .load(track.albumImageUrl)
-                    .resize(200, 200)
+                    .fit()
                     .centerCrop()
                     .placeholder(R.drawable.ic_help_black_24dp)
                     .error(R.drawable.ic_help_black_24dp)
