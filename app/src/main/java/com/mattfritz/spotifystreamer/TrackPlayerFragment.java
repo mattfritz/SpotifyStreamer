@@ -1,8 +1,11 @@
 package com.mattfritz.spotifystreamer;
 
 import android.content.Intent;
+import android.media.AudioManager;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,10 +14,12 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class TrackPlayerFragment extends DialogFragment {
 
+    private final String LOG_TAG = TrackPlayerFragment.class.getSimpleName();
     private final String SHOW_DIALOG_TAG = "SHOW_DIALOG";
     private final String TRACKS_PLAYLIST_TAG = "TRACKS_PLAYLIST";
 
@@ -70,6 +75,19 @@ public class TrackPlayerFragment extends DialogFragment {
 
             TextView trackNameTextView = (TextView) rootView.findViewById(R.id.player_track_name_textview);
             trackNameTextView.setText(track.trackName);
+
+            try {
+                String audioUrl = track.previewUrl;
+                MediaPlayer mp = new MediaPlayer();
+                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+                mp.setDataSource(audioUrl);
+                mp.prepare();
+                mp.start();
+            } catch (IOException e) {
+                Log.e(LOG_TAG, "Error streaming audio");
+                e.printStackTrace();
+            }
+
         }
 
         return rootView;
