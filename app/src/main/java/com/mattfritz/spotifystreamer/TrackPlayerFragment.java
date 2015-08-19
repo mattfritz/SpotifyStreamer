@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -58,13 +59,20 @@ public class TrackPlayerFragment extends DialogFragment {
             // TODO: get track by position from tracks list
             Track track = tracks.get(0);
 
+            // TODO: refactor to use viewholder pattern
+            // Load view with artist, album, and track information
             TextView artistNameTextView = (TextView) rootView.findViewById(R.id.player_artist_name_textview);
+            TextView albumNameTextView = (TextView) rootView.findViewById(R.id.player_album_name_textview);
+            ImageView albumArtImageView = (ImageView) rootView.findViewById(R.id.player_album_art_imageview);
+            TextView trackNameTextView = (TextView) rootView.findViewById(R.id.player_track_name_textview);
+            final ImageButton playButton = (ImageButton) rootView.findViewById(R.id.player_play_button);
+            ImageButton previousButton = (ImageButton) rootView.findViewById(R.id.player_previous_button);
+            ImageButton nextButton = (ImageButton) rootView.findViewById(R.id.player_next_button);
+
             artistNameTextView.setText(track.artistName);
 
-            TextView albumNameTextView = (TextView) rootView.findViewById(R.id.player_album_name_textview);
             albumNameTextView.setText(track.albumName);
 
-            ImageView albumArtImageView = (ImageView) rootView.findViewById(R.id.player_album_art_imageview);
             Picasso.with(getActivity())
                     .load(track.albumImageUrl)
                     .fit()
@@ -73,20 +81,55 @@ public class TrackPlayerFragment extends DialogFragment {
                     .error(R.drawable.ic_help_black_24dp)
                     .into(albumArtImageView);
 
-            TextView trackNameTextView = (TextView) rootView.findViewById(R.id.player_track_name_textview);
             trackNameTextView.setText(track.trackName);
 
+            String audioUrl = track.previewUrl;
+            final MediaPlayer mp = new MediaPlayer();
+
             try {
-                String audioUrl = track.previewUrl;
-                MediaPlayer mp = new MediaPlayer();
                 mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mp.setDataSource(audioUrl);
                 mp.prepare();
                 mp.start();
             } catch (IOException e) {
+                // TODO: Handle this properly with user feedback
                 Log.e(LOG_TAG, "Error streaming audio");
                 e.printStackTrace();
             }
+
+            // Event listeners for audio controls
+            playButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (mp.isPlaying()) {
+                        String uri = "android:drawable/ic_media_play";
+                        int image = getResources().getIdentifier(uri, null, getActivity().getPackageName());
+                        playButton.setImageResource(image);
+
+                        mp.pause();
+                    } else {
+                        String uri = "android:drawable/ic_media_pause";
+                        int image = getResources().getIdentifier(uri, null, getActivity().getPackageName());
+                        playButton.setImageResource(image);
+
+                        mp.start();
+                    }
+                }
+            });
+
+            previousButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: actually do something with this when tracks are dynamically selected
+                }
+            });
+
+            nextButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: actually do something with this when tracks are dynamically selected
+                }
+            });
 
         }
 

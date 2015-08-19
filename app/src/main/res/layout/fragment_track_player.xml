@@ -18,6 +18,7 @@
         android:gravity="center_horizontal"
         android:id="@+id/player_album_name_textview" />
 
+    <!-- TODO: make this image autoscale on tablet view -->
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -75,7 +76,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:src="@android:drawable/ic_media_play"
+            android:src="@android:drawable/ic_media_pause"
             android:id="@+id/player_play_button" />
 
         <ImageButton
