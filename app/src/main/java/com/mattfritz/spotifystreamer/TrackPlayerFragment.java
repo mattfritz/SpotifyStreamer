@@ -1,5 +1,6 @@
 package com.mattfritz.spotifystreamer;
 
+import android.content.Context;
 import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -12,6 +13,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -24,6 +26,18 @@ public class TrackPlayerFragment extends DialogFragment {
     private final String SHOW_DIALOG_TAG = "SHOW_DIALOG";
     private final String PLAYLIST_TRACKS_TAG = "PLAYLIST_TRACKS";
     private final String PLAYLIST_POSITION_TAG = "PLAYLIST_POSITION";
+
+    private MediaPlayer mp = new MediaPlayer();
+    private ArrayList<Track> mTracks;
+    private int mTrackIndex;
+
+    TextView mArtistNameTextView;
+    TextView mAlbumNameTextView;
+    ImageView mAlbumArtImageView;
+    TextView mTrackNameTextView;
+    ImageButton mPlayButton;
+    ImageButton mPreviousButton;
+    ImageButton mNextButton;
 
     public static TrackPlayerFragment newInstance() {
         return new TrackPlayerFragment();
@@ -48,90 +62,86 @@ public class TrackPlayerFragment extends DialogFragment {
 
         Bundle args = getArguments();
         Intent intent = getActivity().getIntent();
-        ArrayList<Track> tracks;
-        int trackIndex;
 
         if (intent.hasExtra(PLAYLIST_TRACKS_TAG)) {
-            tracks = intent.getParcelableArrayListExtra(PLAYLIST_TRACKS_TAG);
-            trackIndex = intent.getIntExtra(PLAYLIST_POSITION_TAG, 0);
+            mTracks = intent.getParcelableArrayListExtra(PLAYLIST_TRACKS_TAG);
+            mTrackIndex = intent.getIntExtra(PLAYLIST_POSITION_TAG, 0);
         } else {
-            tracks = args.getParcelableArrayList(PLAYLIST_TRACKS_TAG);
-            trackIndex = args.getInt(PLAYLIST_POSITION_TAG, 0);
+            mTracks = args.getParcelableArrayList(PLAYLIST_TRACKS_TAG);
+            mTrackIndex = args.getInt(PLAYLIST_POSITION_TAG, 0);
         }
 
-        if (tracks != null) {
-            Track track = tracks.get(trackIndex);
+        if (mTracks != null) {
+            Track track = mTracks.get(mTrackIndex);
 
-            // TODO: refactor to use viewholder pattern
             // Load view with artist, album, and track information
-            TextView artistNameTextView = (TextView) rootView.findViewById(R.id.player_artist_name_textview);
-            TextView albumNameTextView = (TextView) rootView.findViewById(R.id.player_album_name_textview);
-            ImageView albumArtImageView = (ImageView) rootView.findViewById(R.id.player_album_art_imageview);
-            TextView trackNameTextView = (TextView) rootView.findViewById(R.id.player_track_name_textview);
-            final ImageButton playButton = (ImageButton) rootView.findViewById(R.id.player_play_button);
-            ImageButton previousButton = (ImageButton) rootView.findViewById(R.id.player_previous_button);
-            ImageButton nextButton = (ImageButton) rootView.findViewById(R.id.player_next_button);
+            mArtistNameTextView = (TextView) rootView.findViewById(R.id.player_artist_name_textview);
+            mAlbumNameTextView = (TextView) rootView.findViewById(R.id.player_album_name_textview);
+            mAlbumArtImageView = (ImageView) rootView.findViewById(R.id.player_album_art_imageview);
+            mTrackNameTextView = (TextView) rootView.findViewById(R.id.player_track_name_textview);
+            mPlayButton = (ImageButton) rootView.findViewById(R.id.player_play_button);
+            mPreviousButton = (ImageButton) rootView.findViewById(R.id.player_previous_button);
+            mNextButton = (ImageButton) rootView.findViewById(R.id.player_next_button);
 
-            artistNameTextView.setText(track.artistName);
+            loadView(track);
 
-            albumNameTextView.setText(track.albumName);
-
-            Picasso.with(getActivity())
-                    .load(track.albumImageUrl)
-                    .fit()
-                    .centerCrop()
-                    .placeholder(R.drawable.ic_help_black_24dp)
-                    .error(R.drawable.ic_help_black_24dp)
-                    .into(albumArtImageView);
-
-            trackNameTextView.setText(track.trackName);
-
+            // Autoplay track when view is loaded
             String audioUrl = track.previewUrl;
-            final MediaPlayer mp = new MediaPlayer();
-
-            // Autoplay selected track
-            try {
-                mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-                mp.setDataSource(audioUrl);
-                mp.prepare();
-                mp.start();
-            } catch (IOException e) {
-                // TODO: Handle this properly with user feedback
-                Log.e(LOG_TAG, "Error streaming audio");
-                e.printStackTrace();
-            }
+            playTrack(audioUrl);
 
             // Event listeners for audio controls
-            playButton.setOnClickListener(new View.OnClickListener() {
+            mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (mp.isPlaying()) {
                         String uri = "android:drawable/ic_media_play";
                         int image = getResources().getIdentifier(uri, null, getActivity().getPackageName());
-                        playButton.setImageResource(image);
+                        mPlayButton.setImageResource(image);
 
                         mp.pause();
                     } else {
                         String uri = "android:drawable/ic_media_pause";
                         int image = getResources().getIdentifier(uri, null, getActivity().getPackageName());
-                        playButton.setImageResource(image);
+                        mPlayButton.setImageResource(image);
 
                         mp.start();
                     }
                 }
             });
 
-            previousButton.setOnClickListener(new View.OnClickListener() {
+            mPreviousButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: actually do something with this when tracks are dynamically selected
+                    stopPlayback();
+                    if (mTrackIndex == 0) {
+                        mTrackIndex = mTracks.size() - 1;
+                        Track track = mTracks.get(mTrackIndex);
+                        loadView(track);
+                        playTrack(track.previewUrl);
+                    } else {
+                        mTrackIndex -= 1;
+                        Track track = mTracks.get(mTrackIndex);
+                        loadView(track);
+                        playTrack(track.previewUrl);
+                    }
                 }
             });
 
-            nextButton.setOnClickListener(new View.OnClickListener() {
+            mNextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    // TODO: actually do something with this when tracks are dynamically selected
+                    stopPlayback();
+                    if (mTrackIndex == mTracks.size() - 1) {
+                        mTrackIndex = 0;
+                        Track track = mTracks.get(mTrackIndex);
+                        loadView(track);
+                        playTrack(track.previewUrl);
+                    } else {
+                        mTrackIndex += 1;
+                        Track track = mTracks.get(mTrackIndex);
+                        loadView(track);
+                        playTrack(track.previewUrl);
+                    }
                 }
             });
 
@@ -139,4 +149,56 @@ public class TrackPlayerFragment extends DialogFragment {
 
         return rootView;
     }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        stopPlayback();
+    }
+
+    private void stopPlayback() {
+        if (mp != null) {
+            mp.stop();
+            mp.reset();
+            mp.release();
+            mp = null;
+        }
+    }
+
+    private void playTrack(String audioUrl) {
+        stopPlayback();
+        try {
+            mp = new MediaPlayer();
+            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mp.setDataSource(audioUrl);
+            mp.prepare();
+            mp.start();
+        } catch (IOException | IllegalArgumentException e) {
+            Context context = getActivity().getApplicationContext();
+            CharSequence text = "Error streaming audio, please try later";
+            int duration = Toast.LENGTH_SHORT;
+
+            Toast.makeText(context, text, duration).show();
+
+            Log.e(LOG_TAG, "Error streaming audio");
+            e.printStackTrace();
+        }
+    }
+
+    private void loadView(Track track) {
+        mArtistNameTextView.setText(track.artistName);
+
+        mAlbumNameTextView.setText(track.albumName);
+
+        Picasso.with(getActivity())
+                .load(track.albumImageUrl)
+                .fit()
+                .centerCrop()
+                .placeholder(R.drawable.ic_help_black_24dp)
+                .error(R.drawable.ic_help_black_24dp)
+                .into(mAlbumArtImageView);
+
+        mTrackNameTextView.setText(track.trackName);
+    }
+
 }
