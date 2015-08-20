@@ -25,6 +25,8 @@ public class TopTracksFragment extends Fragment {
     private final String ARTIST_NAME_TAG = "ARTIST_NAME";
     private final String PLAYER_FRAGMENT_TAG = "PLAYER_FRAGMENT_TAG";
     private final String SHOW_DIALOG_TAG = "SHOW_DIALOG";
+    private final String PLAYLIST_TRACKS_TAG = "PLAYLIST_TRACKS";
+    private final String PLAYLIST_POSITION_TAG = "PLAYLIST_POSITION";
 
     private SpotifyApi spotifyApi = new SpotifyApi();
     private TrackAdapter mTrackAdapter;
@@ -91,7 +93,8 @@ public class TopTracksFragment extends Fragment {
                     // Only show dialog box if in two pane mode
                     Bundle args = new Bundle();
                     args.putBoolean(SHOW_DIALOG_TAG, true);
-                    args.putParcelableArrayList("TRACKS_PLAYLIST", mTracks);
+                    args.putInt(PLAYLIST_POSITION_TAG, position);
+                    args.putParcelableArrayList(PLAYLIST_TRACKS_TAG, mTracks);
                     fragment.setArguments(args);
 
                     getFragmentManager().beginTransaction()
@@ -99,7 +102,8 @@ public class TopTracksFragment extends Fragment {
                             .commit();
                 } else {
                     Intent intent = new Intent(getActivity(), TrackPlayer.class);
-                    intent.putExtra("TRACKS_PLAYLIST", mTracks);
+                    intent.putExtra(PLAYLIST_POSITION_TAG, position);
+                    intent.putExtra(PLAYLIST_TRACKS_TAG, mTracks);
                     startActivity(intent);
                 }
             }

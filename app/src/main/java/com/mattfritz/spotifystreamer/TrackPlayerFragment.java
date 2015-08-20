@@ -22,7 +22,8 @@ public class TrackPlayerFragment extends DialogFragment {
 
     private final String LOG_TAG = TrackPlayerFragment.class.getSimpleName();
     private final String SHOW_DIALOG_TAG = "SHOW_DIALOG";
-    private final String TRACKS_PLAYLIST_TAG = "TRACKS_PLAYLIST";
+    private final String PLAYLIST_TRACKS_TAG = "PLAYLIST_TRACKS";
+    private final String PLAYLIST_POSITION_TAG = "PLAYLIST_POSITION";
 
     public static TrackPlayerFragment newInstance() {
         return new TrackPlayerFragment();
@@ -47,17 +48,19 @@ public class TrackPlayerFragment extends DialogFragment {
 
         Bundle args = getArguments();
         Intent intent = getActivity().getIntent();
-        ArrayList<Track> tracks = null;
+        ArrayList<Track> tracks;
+        int trackIndex;
 
-        if (intent.hasExtra(TRACKS_PLAYLIST_TAG)) {
-            tracks = intent.getParcelableArrayListExtra(TRACKS_PLAYLIST_TAG);
+        if (intent.hasExtra(PLAYLIST_TRACKS_TAG)) {
+            tracks = intent.getParcelableArrayListExtra(PLAYLIST_TRACKS_TAG);
+            trackIndex = intent.getIntExtra(PLAYLIST_POSITION_TAG, 0);
         } else {
-            tracks = args.getParcelableArrayList(TRACKS_PLAYLIST_TAG);
+            tracks = args.getParcelableArrayList(PLAYLIST_TRACKS_TAG);
+            trackIndex = args.getInt(PLAYLIST_POSITION_TAG, 0);
         }
 
         if (tracks != null) {
-            // TODO: get track by position from tracks list
-            Track track = tracks.get(0);
+            Track track = tracks.get(trackIndex);
 
             // TODO: refactor to use viewholder pattern
             // Load view with artist, album, and track information
@@ -86,6 +89,7 @@ public class TrackPlayerFragment extends DialogFragment {
             String audioUrl = track.previewUrl;
             final MediaPlayer mp = new MediaPlayer();
 
+            // Autoplay selected track
             try {
                 mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
                 mp.setDataSource(audioUrl);
