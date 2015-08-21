@@ -115,36 +115,14 @@ public class TrackPlayerFragment extends DialogFragment {
             mPreviousButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    stopPlayback();
-                    if (mTrackIndex == 0) {
-                        mTrackIndex = mTracks.size() - 1;
-                        Track track = mTracks.get(mTrackIndex);
-                        loadView(track);
-                        playTrack(track.previewUrl);
-                    } else {
-                        mTrackIndex -= 1;
-                        Track track = mTracks.get(mTrackIndex);
-                        loadView(track);
-                        playTrack(track.previewUrl);
-                    }
+                    playPreviousTrack();
                 }
             });
 
             mNextButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    stopPlayback();
-                    if (mTrackIndex == mTracks.size() - 1) {
-                        mTrackIndex = 0;
-                        Track track = mTracks.get(mTrackIndex);
-                        loadView(track);
-                        playTrack(track.previewUrl);
-                    } else {
-                        mTrackIndex += 1;
-                        Track track = mTracks.get(mTrackIndex);
-                        loadView(track);
-                        playTrack(track.previewUrl);
-                    }
+                    playNextTrack();
                 }
             });
 
@@ -177,6 +155,13 @@ public class TrackPlayerFragment extends DialogFragment {
                 }
             });
 
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    playNextTrack();
+                }
+            });
+
         }
 
         return rootView;
@@ -204,6 +189,9 @@ public class TrackPlayerFragment extends DialogFragment {
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mp.setDataSource(audioUrl);
             mp.prepare();
+            if (!mp.isPlaying()) {
+                mp.start();
+            }
         } catch (IOException | IllegalArgumentException e) {
             Context context = getActivity().getApplicationContext();
             CharSequence text = "Error streaming audio, please try later";
@@ -213,6 +201,34 @@ public class TrackPlayerFragment extends DialogFragment {
 
             Log.e(LOG_TAG, "Error streaming audio");
             e.printStackTrace();
+        }
+    }
+
+    private void playNextTrack() {
+        if (mTrackIndex == mTracks.size() - 1) {
+            mTrackIndex = 0;
+            Track track = mTracks.get(mTrackIndex);
+            loadView(track);
+            playTrack(track.previewUrl);
+        } else {
+            mTrackIndex += 1;
+            Track track = mTracks.get(mTrackIndex);
+            loadView(track);
+            playTrack(track.previewUrl);
+        }
+    }
+
+    private void playPreviousTrack() {
+        if (mTrackIndex == 0) {
+            mTrackIndex = mTracks.size() - 1;
+            Track track = mTracks.get(mTrackIndex);
+            loadView(track);
+            playTrack(track.previewUrl);
+        } else {
+            mTrackIndex -= 1;
+            Track track = mTracks.get(mTrackIndex);
+            loadView(track);
+            playTrack(track.previewUrl);
         }
     }
 
