@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,6 +36,7 @@ public class TrackPlayerFragment extends DialogFragment {
     TextView mAlbumNameTextView;
     ImageView mAlbumArtImageView;
     TextView mTrackNameTextView;
+    SeekBar mTrackSeekBar;
     ImageButton mPlayButton;
     ImageButton mPreviousButton;
     ImageButton mNextButton;
@@ -79,6 +81,7 @@ public class TrackPlayerFragment extends DialogFragment {
             mAlbumNameTextView = (TextView) rootView.findViewById(R.id.player_album_name_textview);
             mAlbumArtImageView = (ImageView) rootView.findViewById(R.id.player_album_art_imageview);
             mTrackNameTextView = (TextView) rootView.findViewById(R.id.player_track_name_textview);
+            mTrackSeekBar = (SeekBar) rootView.findViewById(R.id.player_seek_bar);
             mPlayButton = (ImageButton) rootView.findViewById(R.id.player_play_button);
             mPreviousButton = (ImageButton) rootView.findViewById(R.id.player_previous_button);
             mNextButton = (ImageButton) rootView.findViewById(R.id.player_next_button);
@@ -145,6 +148,35 @@ public class TrackPlayerFragment extends DialogFragment {
                 }
             });
 
+            mTrackSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    int totalDuration = mp.getDuration();
+                    double currentPositionRatio = (double) seekBar.getProgress() / seekBar.getMax();
+                    int newPosition = (int) ((double) currentPositionRatio * totalDuration);
+
+                    mp.seekTo(newPosition);
+                }
+            });
+
+            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                    mTrackSeekBar.setMax(mp.getDuration());
+                }
+            });
+
         }
 
         return rootView;
@@ -172,7 +204,6 @@ public class TrackPlayerFragment extends DialogFragment {
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mp.setDataSource(audioUrl);
             mp.prepare();
-            mp.start();
         } catch (IOException | IllegalArgumentException e) {
             Context context = getActivity().getApplicationContext();
             CharSequence text = "Error streaming audio, please try later";
