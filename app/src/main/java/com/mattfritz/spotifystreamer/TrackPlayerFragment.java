@@ -147,21 +147,6 @@ public class TrackPlayerFragment extends DialogFragment {
                 }
             });
 
-            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                @Override
-                public void onPrepared(MediaPlayer mp) {
-                    mp.start();
-                    mTrackSeekBar.setMax(mp.getDuration());
-                }
-            });
-
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                @Override
-                public void onCompletion(MediaPlayer mp) {
-                    playNextTrack();
-                }
-            });
-
         }
 
         return rootView;
@@ -186,12 +171,25 @@ public class TrackPlayerFragment extends DialogFragment {
         stopPlayback();
         try {
             mp = new MediaPlayer();
+
+            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                @Override
+                public void onPrepared(MediaPlayer mp) {
+                    mp.start();
+                    mTrackSeekBar.setMax(mp.getDuration());
+                }
+            });
+
+            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                @Override
+                public void onCompletion(MediaPlayer mp) {
+                    playNextTrack();
+                }
+            });
+
             mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
             mp.setDataSource(audioUrl);
             mp.prepare();
-            if (!mp.isPlaying()) {
-                mp.start();
-            }
         } catch (IOException | IllegalArgumentException e) {
             Context context = getActivity().getApplicationContext();
             CharSequence text = "Error streaming audio, please try later";
