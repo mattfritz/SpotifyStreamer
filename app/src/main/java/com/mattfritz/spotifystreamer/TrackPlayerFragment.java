@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -41,6 +42,8 @@ public class TrackPlayerFragment extends DialogFragment {
     ImageButton mPreviousButton;
     ImageButton mNextButton;
 
+    private Handler mHandler = new Handler();
+
     public static TrackPlayerFragment newInstance() {
         return new TrackPlayerFragment();
     }
@@ -55,6 +58,7 @@ public class TrackPlayerFragment extends DialogFragment {
         } else {
             setShowsDialog(false);
         }
+
     }
 
     @Override
@@ -86,8 +90,25 @@ public class TrackPlayerFragment extends DialogFragment {
             mPreviousButton = (ImageButton) rootView.findViewById(R.id.player_previous_button);
             mNextButton = (ImageButton) rootView.findViewById(R.id.player_next_button);
 
+            // Load track information into view before playing
             loadView(track);
 
+            // Update seekbar when track is playing
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    if(mp != null){
+                        int currentPosition = mp.getCurrentPosition();
+                        int duration = mp.getDuration();
+                        double currentPositionRatio = (double) currentPosition / duration;
+                        int newPosition = (int) ((double) currentPositionRatio * mTrackSeekBar.getMax());
+                        mTrackSeekBar.setProgress(newPosition);
+                    }
+                    mHandler.postDelayed(this, 500);
+                }
+            });
+
+            // TODO: find a way to not call this here, in case of device rotation
             // Autoplay track when view is loaded
             String audioUrl = track.previewUrl;
             playTrack(audioUrl);
@@ -129,7 +150,13 @@ public class TrackPlayerFragment extends DialogFragment {
             mTrackSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                    if (mp != null && fromUser) {
+                        int totalDuration = mp.getDuration();
+                        double currentPositionRatio = (double) seekBar.getProgress() / seekBar.getMax();
+                        int newPosition = (int) ((double) currentPositionRatio * totalDuration);
 
+                        mp.seekTo(newPosition);
+                    }
                 }
 
                 @Override
@@ -139,11 +166,7 @@ public class TrackPlayerFragment extends DialogFragment {
 
                 @Override
                 public void onStopTrackingTouch(SeekBar seekBar) {
-                    int totalDuration = mp.getDuration();
-                    double currentPositionRatio = (double) seekBar.getProgress() / seekBar.getMax();
-                    int newPosition = (int) ((double) currentPositionRatio * totalDuration);
 
-                    mp.seekTo(newPosition);
                 }
             });
 
@@ -176,6 +199,7 @@ public class TrackPlayerFragment extends DialogFragment {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
+                    mTrackSeekBar.setProgress(0);
                     mTrackSeekBar.setMax(mp.getDuration());
                 }
             });
