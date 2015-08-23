@@ -28,8 +28,9 @@ public class TrackPlayerFragment extends DialogFragment {
     private final String SHOW_DIALOG_TAG = "SHOW_DIALOG";
     private final String PLAYLIST_TRACKS_TAG = "PLAYLIST_TRACKS";
     private final String PLAYLIST_POSITION_TAG = "PLAYLIST_POSITION";
+    private final String SAVED_PLAYLIST_POSITION_TAG = "SAVED_PLAYLIST_POSITION";
 
-    private MediaPlayer mp = new MediaPlayer();
+    private static MediaPlayer mp = new MediaPlayer();
     private ArrayList<Track> mTracks;
     private int mTrackIndex;
 
@@ -77,6 +78,11 @@ public class TrackPlayerFragment extends DialogFragment {
             mTrackIndex = args.getInt(PLAYLIST_POSITION_TAG, 0);
         }
 
+        // Restore track to previous playing position
+        if (savedInstanceState != null) {
+            mTrackIndex = savedInstanceState.getInt(SAVED_PLAYLIST_POSITION_TAG);
+        }
+
         if (mTracks != null) {
             Track track = mTracks.get(mTrackIndex);
 
@@ -108,10 +114,14 @@ public class TrackPlayerFragment extends DialogFragment {
                 }
             });
 
-            // TODO: find a way to not call this here, in case of device rotation
             // Autoplay track when view is loaded
-            String audioUrl = track.previewUrl;
-            playTrack(audioUrl);
+            if (mp != null && !mp.isPlaying()) {
+                String audioUrl = track.previewUrl;
+                playTrack(audioUrl);
+            }
+
+            // Seek to previously playing position or initial position
+//            mp.seekTo(mCurrentPlaybackPosition);
 
             // Event listeners for audio controls
             mPlayButton.setOnClickListener(new View.OnClickListener() {
@@ -176,9 +186,14 @@ public class TrackPlayerFragment extends DialogFragment {
     }
 
     @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putInt(SAVED_PLAYLIST_POSITION_TAG, mTrackIndex);
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
     public void onPause() {
         super.onPause();
-        stopPlayback();
     }
 
     private void stopPlayback() {
