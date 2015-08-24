@@ -1,9 +1,3 @@
 <resources>
-<!--
-For more on layout aliases, see:
-http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
--->
-
-<!-- Replace fragment detail view with layout that takes advantage of more available width.-->
-<item type="layout" name="fragment_track_player">@layout/fragment_track_player_wide</item>
+    <item type="layout" name="fragment_track_player">@layout/fragment_track_player_wide</item>
 </resources>
