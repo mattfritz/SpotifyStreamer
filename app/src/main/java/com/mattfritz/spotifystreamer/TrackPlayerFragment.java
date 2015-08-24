@@ -115,7 +115,7 @@ public class TrackPlayerFragment extends DialogFragment {
             });
 
             // Autoplay track when view is loaded
-            if (mp != null && !mp.isPlaying()) {
+            if (mp != null && savedInstanceState == null) {
                 String audioUrl = track.previewUrl;
                 playTrack(audioUrl);
             }
