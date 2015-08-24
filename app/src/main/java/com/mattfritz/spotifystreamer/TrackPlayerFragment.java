@@ -120,9 +120,6 @@ public class TrackPlayerFragment extends DialogFragment {
                 playTrack(audioUrl);
             }
 
-            // Seek to previously playing position or initial position
-//            mp.seekTo(mCurrentPlaybackPosition);
-
             // Event listeners for audio controls
             mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override

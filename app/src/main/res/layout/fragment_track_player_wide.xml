@@ -1,37 +1,50 @@
 <LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:padding="16dp"
-    android:background="@color/light_grey"
-    android:orientation="vertical" >
+xmlns:android="http://schemas.android.com/apk/res/android"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:padding="16dp"
+android:background="@color/light_grey"
+android:orientation="vertical" >
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:id="@+id/player_artist_name_textview" />
+        android:orientation="horizontal">
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:scaleType="centerInside"
+            android:adjustViewBounds="true"
+            android:layout_gravity="center_horizontal"
+            android:padding="30dp"
+            android:id="@+id/player_album_art_imageview" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:id="@+id/player_album_name_textview" />
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_gravity="center_horizontal"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:id="@+id/player_artist_name_textview" />
 
-    <ImageView
-        android:layout_width="350dp"
-        android:layout_height="350dp"
-        android:scaleType="centerInside"
-        android:adjustViewBounds="true"
-        android:layout_gravity="center_horizontal"
-        android:layout_margin="30dp"
-        android:id="@+id/player_album_art_imageview" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:id="@+id/player_album_name_textview" />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center_horizontal"
-        android:id="@+id/player_track_name_textview" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:id="@+id/player_track_name_textview" />
+        </LinearLayout>
+    </LinearLayout>
 
     <SeekBar
         android:layout_width="match_parent"
