@@ -8,16 +8,17 @@ android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="15"
         android:orientation="horizontal">
         <ImageView
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:scaleType="centerInside"
+            android:scaleType="centerCrop"
             android:adjustViewBounds="true"
             android:layout_gravity="center_horizontal"
-            android:padding="30dp"
+            android:padding="50dp"
             android:id="@+id/player_album_art_imageview" />
 
         <LinearLayout
@@ -25,6 +26,7 @@ android:orientation="vertical" >
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:layout_gravity="center_horizontal"
+            android:paddingTop="20dp"
             android:orientation="vertical">
             <TextView
                 android:layout_width="match_parent"
@@ -42,18 +44,21 @@ android:orientation="vertical" >
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
+                android:paddingTop="12dp"
                 android:id="@+id/player_track_name_textview" />
         </LinearLayout>
     </LinearLayout>
 
     <SeekBar
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:id="@+id/player_seek_bar" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="0dp"
+        android:layout_weight="1" >
 
         <TextView
             android:layout_width="0dp"
@@ -75,7 +80,8 @@ android:orientation="vertical" >
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
+        android:layout_weight="2"
         android:orientation="horizontal" >
 
         <ImageButton
