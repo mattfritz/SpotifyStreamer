@@ -30,7 +30,7 @@ public class TrackPlayerFragment extends DialogFragment {
     private final String PLAYLIST_POSITION_TAG = "PLAYLIST_POSITION";
     private final String SAVED_PLAYLIST_POSITION_TAG = "SAVED_PLAYLIST_POSITION";
 
-    private static MediaPlayer mp = new MediaPlayer();
+    private static MediaPlayer mMediaPlayer = new MediaPlayer();
     private ArrayList<Track> mTracks;
     private int mTrackIndex;
 
@@ -42,6 +42,7 @@ public class TrackPlayerFragment extends DialogFragment {
     ImageButton mPlayButton;
     ImageButton mPreviousButton;
     ImageButton mNextButton;
+    TextView mElapsedTimeTextView;
 
     private Handler mHandler = new Handler();
 
@@ -95,6 +96,7 @@ public class TrackPlayerFragment extends DialogFragment {
             mPlayButton = (ImageButton) rootView.findViewById(R.id.player_play_button);
             mPreviousButton = (ImageButton) rootView.findViewById(R.id.player_previous_button);
             mNextButton = (ImageButton) rootView.findViewById(R.id.player_next_button);
+            mElapsedTimeTextView = (TextView) rootView.findViewById(R.id.player_start_time);
 
             // Load track information into view before playing
             loadView(track);
@@ -103,39 +105,50 @@ public class TrackPlayerFragment extends DialogFragment {
             getActivity().runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if(mp != null){
-                        int currentPosition = mp.getCurrentPosition();
-                        int duration = mp.getDuration();
+                    if(mMediaPlayer != null) {
+                        int currentPosition = mMediaPlayer.getCurrentPosition();
+                        int duration = mMediaPlayer.getDuration();
                         double currentPositionRatio = (double) currentPosition / duration;
                         int newPosition = (int) ((double) currentPositionRatio * mTrackSeekBar.getMax());
                         mTrackSeekBar.setProgress(newPosition);
+
+                        // Update elapsed track time
+                        int elapsedTime = newPosition / 1000;
+                        Log.v(LOG_TAG, "NEW_POSITION: " + Integer.toString(newPosition));
+                        Log.v(LOG_TAG, "ELAPSED_TIME: " + Integer.toString(elapsedTime));
+                        String seconds = getResources().getString(R.string.format_time_seconds, elapsedTime);
+                        Log.v(LOG_TAG, "THIS IS THE OUTPUT: " + seconds);
+                        mElapsedTimeTextView.setText(seconds);
                     }
                     mHandler.postDelayed(this, 500);
                 }
             });
 
-            // Autoplay track when view is loaded
-            if (mp != null && savedInstanceState == null) {
+            if (mMediaPlayer != null && savedInstanceState == null) {
+                // Autoplay track when view is loaded for the first time
                 String audioUrl = track.previewUrl;
                 playTrack(audioUrl);
+            } else if (mMediaPlayer != null && mMediaPlayer.isPlaying()) {
+                // Set seekbar max on rotation for elapsed time updates
+                mTrackSeekBar.setMax(mMediaPlayer.getDuration());
             }
 
             // Event listeners for audio controls
             mPlayButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (mp.isPlaying()) {
+                    if (mMediaPlayer.isPlaying()) {
                         String uri = "android:drawable/ic_media_play";
                         int image = getResources().getIdentifier(uri, null, getActivity().getPackageName());
                         mPlayButton.setImageResource(image);
 
-                        mp.pause();
+                        mMediaPlayer.pause();
                     } else {
                         String uri = "android:drawable/ic_media_pause";
                         int image = getResources().getIdentifier(uri, null, getActivity().getPackageName());
                         mPlayButton.setImageResource(image);
 
-                        mp.start();
+                        mMediaPlayer.start();
                     }
                 }
             });
@@ -157,12 +170,12 @@ public class TrackPlayerFragment extends DialogFragment {
             mTrackSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
                 @Override
                 public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                    if (mp != null && fromUser) {
-                        int totalDuration = mp.getDuration();
+                    if (mMediaPlayer != null && fromUser) {
+                        int totalDuration = mMediaPlayer.getDuration();
                         double currentPositionRatio = (double) seekBar.getProgress() / seekBar.getMax();
                         int newPosition = (int) ((double) currentPositionRatio * totalDuration);
 
-                        mp.seekTo(newPosition);
+                        mMediaPlayer.seekTo(newPosition);
                     }
                 }
 
@@ -191,23 +204,24 @@ public class TrackPlayerFragment extends DialogFragment {
     @Override
     public void onPause() {
         super.onPause();
+        mHandler.removeCallbacksAndMessages(null);
     }
 
     private void stopPlayback() {
-        if (mp != null) {
-            mp.stop();
-            mp.reset();
-            mp.release();
-            mp = null;
+        if (mMediaPlayer != null) {
+            mMediaPlayer.stop();
+            mMediaPlayer.reset();
+            mMediaPlayer.release();
+            mMediaPlayer = null;
         }
     }
 
     private void playTrack(String audioUrl) {
         stopPlayback();
         try {
-            mp = new MediaPlayer();
+            mMediaPlayer = new MediaPlayer();
 
-            mp.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            mMediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                 @Override
                 public void onPrepared(MediaPlayer mp) {
                     mp.start();
@@ -216,16 +230,16 @@ public class TrackPlayerFragment extends DialogFragment {
                 }
             });
 
-            mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            mMediaPlayer.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
                     playNextTrack();
                 }
             });
 
-            mp.setAudioStreamType(AudioManager.STREAM_MUSIC);
-            mp.setDataSource(audioUrl);
-            mp.prepare();
+            mMediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+            mMediaPlayer.setDataSource(audioUrl);
+            mMediaPlayer.prepare();
         } catch (IOException | IllegalArgumentException e) {
             Context context = getActivity().getApplicationContext();
             CharSequence text = "Error streaming audio, please try later";
