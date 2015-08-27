@@ -6,10 +6,9 @@
     <string name="list_item_artist_content">Artist Image</string>
     <string name="title_activity_top_tracks">Top 10 Tracks</string>
     <string name="list_item_album_content">Album Art</string>
-    <string name="title_activity_track_player">TrackPlayer</string>
+    <string name="title_activity_track_player">Track Player</string>
 
     <!-- TEMP STRINGS FOR DIALOGFRAGMENT TESTING -->
-    <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
     <string name="format_time_seconds">0:<xliff:g id="seconds">%02d</xliff:g></string>
 </resources>
