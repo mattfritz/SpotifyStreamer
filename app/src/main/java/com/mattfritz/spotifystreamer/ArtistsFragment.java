@@ -29,7 +29,15 @@ public class ArtistsFragment extends Fragment {
     private ArtistAdapter mArtistAdapter;
     private boolean mTwoPane;
 
+    private Utility mUtility;
+
     public ArtistsFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        mUtility = new Utility(getActivity());
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -49,24 +57,32 @@ public class ArtistsFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Artist artist = (Artist) parent.getItemAtPosition(position);
 
-                if (mTwoPane) {
-                    view.setSelected(true);
+                if (mUtility.isNetworkAvailable()) {
+                    if (mTwoPane) {
+                        view.setSelected(true);
 
-                    Bundle args = new Bundle();
-                    args.putString(ARTIST_ID_TAG, artist.id);
-                    args.putString(ARTIST_NAME_TAG, artist.name);
+                        Bundle args = new Bundle();
+                        args.putString(ARTIST_ID_TAG, artist.id);
+                        args.putString(ARTIST_NAME_TAG, artist.name);
 
-                    TopTracksFragment ttfragment = new TopTracksFragment();
-                    ttfragment.setArguments(args);
+                        TopTracksFragment ttfragment = new TopTracksFragment();
+                        ttfragment.setArguments(args);
 
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.top_tracks_container, ttfragment, TRACKSFRAGMENT_TAG)
-                            .commit();
+                        getActivity().getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.top_tracks_container, ttfragment, TRACKSFRAGMENT_TAG)
+                                .commit();
+                    } else {
+                        Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class)
+                                .putExtra(Intent.EXTRA_TEXT, artist.id)
+                                .putExtra(Intent.EXTRA_TITLE, artist.name);
+                        startActivity(detailIntent);
+                    }
                 } else {
-                    Intent detailIntent = new Intent(getActivity(), TopTracksActivity.class)
-                            .putExtra(Intent.EXTRA_TEXT, artist.id)
-                            .putExtra(Intent.EXTRA_TITLE, artist.name);
-                    startActivity(detailIntent);
+                    Context context = getActivity().getApplicationContext();
+                    CharSequence text = "No internet connection. Please connect and try again";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast.makeText(context, text, duration).show();
                 }
             }
         });
@@ -76,9 +92,17 @@ public class ArtistsFragment extends Fragment {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                listView.setItemChecked(-1, true);
-                FetchArtistsTask task = new FetchArtistsTask();
-                task.execute(query);
+                if (mUtility.isNetworkAvailable()) {
+                    listView.setItemChecked(-1, true);
+                    FetchArtistsTask task = new FetchArtistsTask();
+                    task.execute(query);
+                } else {
+                    Context context = getActivity().getApplicationContext();
+                    CharSequence text = "No internet connection. Please connect and try again";
+                    int duration = Toast.LENGTH_SHORT;
+
+                    Toast.makeText(context, text, duration).show();
+                }
                 return true;
             }
 

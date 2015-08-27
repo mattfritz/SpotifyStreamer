@@ -33,8 +33,15 @@ public class TopTracksFragment extends Fragment {
     private ArrayList<Track> mTracks;
     private ListView mListView;
 
+    private Utility mUtility;
 
     public TopTracksFragment() {
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        mUtility = new Utility(getActivity());
+        super.onCreate(savedInstanceState);
     }
 
     @Override
@@ -67,8 +74,16 @@ public class TopTracksFragment extends Fragment {
             actionBar.setTitle("Top 10 Tracks");
             actionBar.setSubtitle(artistName);
 
-            FetchTopTracksTask task = new FetchTopTracksTask();
-            task.execute(artistId);
+            if (mUtility.isNetworkAvailable()) {
+                FetchTopTracksTask task = new FetchTopTracksTask();
+                task.execute(artistId);
+            } else {
+                Context context = getActivity().getApplicationContext();
+                CharSequence text = "No internet connection. Please connect and try again";
+                int duration = Toast.LENGTH_SHORT;
+
+                Toast.makeText(context, text, duration).show();
+            }
         }
 
         if (savedInstanceState != null) {
