@@ -6,7 +6,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,7 +63,7 @@ public class TopTracksFragment extends Fragment {
         }
 
         if (artistId != null && artistName != null) {
-            ActionBar actionBar = ((ActionBarActivity) getActivity()).getSupportActionBar();
+            ActionBar actionBar = ((AppCompatActivity) getActivity()).getSupportActionBar();
             actionBar.setTitle("Top 10 Tracks");
             actionBar.setSubtitle(artistName);
 
@@ -101,7 +101,7 @@ public class TopTracksFragment extends Fragment {
                             .add(fragment, PLAYER_FRAGMENT_TAG)
                             .commit();
                 } else {
-                    Intent intent = new Intent(getActivity(), TrackPlayer.class);
+                    Intent intent = new Intent(getActivity(), TrackPlayerActivity.class);
                     intent.putExtra(PLAYLIST_POSITION_TAG, position);
                     intent.putExtra(PLAYLIST_TRACKS_TAG, mTracks);
                     startActivity(intent);

@@ -114,10 +114,7 @@ public class TrackPlayerFragment extends DialogFragment {
 
                         // Update elapsed track time
                         int elapsedTime = newPosition / 1000;
-                        Log.v(LOG_TAG, "NEW_POSITION: " + Integer.toString(newPosition));
-                        Log.v(LOG_TAG, "ELAPSED_TIME: " + Integer.toString(elapsedTime));
                         String seconds = getResources().getString(R.string.format_time_seconds, elapsedTime);
-                        Log.v(LOG_TAG, "THIS IS THE OUTPUT: " + seconds);
                         mElapsedTimeTextView.setText(seconds);
                     }
                     mHandler.postDelayed(this, 500);
